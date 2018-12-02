@@ -81,7 +81,7 @@ class Level {
     this.actors = actors;
     this.status = null;
     this.finishDelay = 1;
-    this.height = grid.length;
+    this.height = this.grid.length;
   }
 
   get width() {
@@ -95,11 +95,11 @@ class Level {
   }
 
    get player() {
-    this.actors.find((el, i, arr) => {
-      if (el.type === 'player') {
-        return el;
-      }
-    });
+    // this.actors.find((el, i, arr) => {
+    //   if (el.type === 'player') {
+    //     return el;
+    //   }
+    // });
     for(let actor of this.actors) {
       if(actor.type === 'player') {
         return actor;
@@ -176,3 +176,71 @@ class Level {
     }
   }
 }
+
+class LevelParser {
+  constructor(glossary) {
+    this.glossary = glossary;
+
+  }
+  actorFromSymbol(symbol) {
+    if(symbol && this.glossary[symbol]) {
+      return this.glossary[symbol];
+    }
+  }
+
+  obstacleFromSymbol(symbol) {
+    const symbols = { 'x': 'wall',
+                      '!': 'lava'
+                    };
+    return symbols[symbol];
+  }
+
+  createGrid(strings) {
+    const grid = [];
+    for(let y = 0; y < strings.length; y++) {
+      const string = strings[y];
+      grid[y] = [];
+      for(let x = 0; x < string.length; x++) {
+        const symbol = string.charAt(x);
+          grid[y].push(this.obstacleFromSymbol(symbol));
+      }
+    }
+    return grid;
+  }
+
+  createActors(strings) {
+    const actors = [];
+
+    let i = 0;
+    for(let y = 0; y < strings.length; y++) {
+      const string = strings[y];
+      for(let x = 0; x < string.length; x++) {
+        const symbol = string.charAt(x);
+        const actorFn = this.actorFromSymbol(symbol);
+        if(typeof(actorFn) === 'function') {
+          const actor = new actorFn();
+          if(actor instanceof Actor) {
+            actors[i] = new actorFn(new Vector(x, y));
+            i++;
+          }
+        }
+      }
+    }
+    return actors;
+  }
+
+  parse(strings) {
+    return new Level(this.createGrid(strings), this.createActors(strings));
+  }
+}
+
+
+
+
+// const grid = [
+//   new Array(3),
+//   ['wall', 'wall', 'lava']
+// ];
+// const level = new Level(grid);
+// runLevel(level, DOMDisplay);
+
