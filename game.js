@@ -42,12 +42,12 @@ class Actor {
     this.pos = pos;
     this.size = size;
     this.speed = speed;
-    Object.defineProperty(this, 'type', {
-      value: 'actor'
-    });
   }
 
-  act() { }
+  get type() {
+    return 'actor';
+  }
+
 
   get left() {
     return this.pos.x;
@@ -61,6 +61,8 @@ class Actor {
   get bottom() {
     return this.pos.y + this.size.y;
   }
+
+  act() { }
 
   isIntersect(actor) {
     isValidActor(actor, 'неверный тип или отсутвие объекта, объект должен типа Actor');
@@ -81,7 +83,7 @@ class Level {
     this.actors = actors;
     this.status = null;
     this.finishDelay = 1;
-    this.height = this.grid.length;
+    this.height = grid.length;
   }
 
   get width() {
@@ -95,11 +97,6 @@ class Level {
   }
 
    get player() {
-    // this.actors.find((el, i, arr) => {
-    //   if (el.type === 'player') {
-    //     return el;
-    //   }
-    // });
     for(let actor of this.actors) {
       if(actor.type === 'player') {
         return actor;
@@ -154,9 +151,9 @@ class Level {
     }
     for(let actor of this.actors) {
       if(actor.type === type) {
-        return true;
-      } else {
         return false;
+      } else {
+        return true;
       }
     }
   }
@@ -178,7 +175,7 @@ class Level {
 }
 
 class LevelParser {
-  constructor(glossary) {
+  constructor(glossary = {}) {
     this.glossary = glossary;
 
   }
@@ -206,6 +203,7 @@ class LevelParser {
       }
     }
     return grid;
+
   }
 
   createActors(strings) {
@@ -218,9 +216,9 @@ class LevelParser {
         const symbol = string.charAt(x);
         const actorFn = this.actorFromSymbol(symbol);
         if(typeof(actorFn) === 'function') {
-          const actor = new actorFn();
+          const actor = new actorFn(new Vector(x, y));
           if(actor instanceof Actor) {
-            actors[i] = new actorFn(new Vector(x, y));
+            actors.push(actor);
             i++;
           }
         }
