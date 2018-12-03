@@ -48,7 +48,6 @@ class Actor {
     return 'actor';
   }
 
-
   get left() {
     return this.pos.x;
   }
@@ -64,6 +63,7 @@ class Actor {
 
   act() { }
 
+  // Метод проверяет, пересекается ли текущий объект с переданным объектом
   isIntersect(actor) {
     isValidActor(actor, 'неверный тип или отсутвие объекта, объект должен типа Actor');
     if (actor === this) {
@@ -76,6 +76,7 @@ class Actor {
   }
 }
 
+// Объекты класса Level реализуют схему игрового поля конкретного уровня, контролируют все движущиеся объекты на нём и реализуют логику игры.
 class Level {
   constructor(grid = [], actors = []) {
 
@@ -112,6 +113,7 @@ class Level {
     return false;
   }
 
+  // Метод Определяет, расположен ли какой-то другой движущийся объект в переданной позиции, и если да, вернёт этот объект.
   actorAt(actor) {
     isValidActor(actor, 'неверный тип или отсутвие объекта, объект должен типа Actor');
     for (let el of this.actors) {
@@ -121,6 +123,7 @@ class Level {
     }
   }
 
+  // Аналогично методу actorAt определяет, нет ли препятствия в указанном месте. Также этот метод контролирует выход объекта за границы игрового поля.
   obstacleAt(pos, size) {
     const message = 'Метод obstacleAt: неверный тип переданного объекта, объект должен типа Vector';
     isValidVector(pos, message);
@@ -157,7 +160,7 @@ class Level {
       }
     }
   }
-
+  // Один из ключевых методов, определяющий логику игры. Меняет состояние игрового поля при касании игроком каких-либо объектов или препятствий.
   playerTouched(type, actor) {
     if(this.status !== null) {
       return;
@@ -233,6 +236,31 @@ class LevelParser {
 }
 
 
+class Fireball extends Actor {
+  constructor(pos = new Vector(0, 0), speed = new Vector(0, 0)) {
+    super(pos, new Vector(1, 1), speed)
+  }
+
+  get type() {
+    return 'fireball';
+  }
+
+  getNextPosition(time = 1) {
+    return this.pos.plus(this.speed.times(time));
+  }
+
+  handleObstacle() {
+    this.speed = this.speed.times(-1);
+  }
+
+  act(time, level) {
+    const newPos = this.getNextPosition(time);
+    if (level.obstacleAt(newPos, this.size)) {
+      return this.handleObstacle();
+    }
+    this.pos = newPos;
+  }
+}
 
 
 // const grid = [
