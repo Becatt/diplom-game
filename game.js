@@ -190,7 +190,7 @@ class LevelParser {
 
   obstacleFromSymbol(symbol) {
     const symbols = { 'x': 'wall',
-                      '!': 'lava'
+                      '!': 'lava',
                     };
     return symbols[symbol];
   }
@@ -290,8 +290,7 @@ class FireRain extends Fireball {
 
 class Coin extends Actor {
   constructor(pos = new Vector(0, 0)) {
-    super(pos, new Vector(0.6, 0.6));
-    this.pos = pos.plus(new Vector(0.2, 0.1));
+    super( pos.plus(new Vector(0.2, 0.1)), new Vector(0.6, 0.6));
     this.firstPos = pos.plus(new Vector(0.2, 0.1));
     this.springSpeed = 8;
     this.springDist = 0.07;
@@ -320,10 +319,59 @@ class Coin extends Actor {
   }
 }
 
-// const grid = [
-//   new Array(3),
-//   ['wall', 'wall', 'lava']
-// ];
-// const level = new Level(grid);
-// runLevel(level, DOMDisplay);
+class Player extends Actor {
+  constructor(pos = new Vector(0, 0)) {
+    super(pos.plus(new Vector(0, -0.5)), new Vector(0.8, 1.5));
+  }
 
+  get type() {
+    return 'player';
+  }
+}
+
+
+const schemas = [
+  [
+    '                    ',
+    '                    ',
+    '                    ',
+    '                    ',
+    '            o       ',
+    '    =               ',
+    '       o            ',
+    '     !xxxxxxxx      ',
+    ' @                  ',
+    'xxx!             |o ',
+    '               !xxxx'
+  ],
+  [
+    '      v             ',
+    '                    ',
+    '  v                 ',
+    '           o   o    ',
+    '        xxxxxxxxx   ',
+    '@   x               ',
+    'x                   ',
+    '                    '
+  ],
+  [
+    '      v             ',
+    '             v      ',
+    '  v                 ',
+    '           o   o    ',
+    '        xxxxxxxxx   ',
+    '@   x               ',
+    'x                   ',
+    '                    '
+  ]
+];
+const actorDict = {
+  '@': Player,
+  'v': FireRain,
+  'o': Coin,
+  '=': HorizontalFireball,
+  '|': VerticalFireball
+}
+const parser = new LevelParser(actorDict);
+runGame(schemas, parser, DOMDisplay)
+  .then(() => alert('Ура, Вы выиграли!'));
