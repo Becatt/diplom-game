@@ -262,17 +262,20 @@ class Fireball extends Actor {
   }
 }
 
+
 class HorizontalFireball extends Fireball {
   constructor(pos) {
     super(pos, new Vector(2, 0));
   }
 }
 
+
 class VerticalFireball extends Fireball {
   constructor(pos) {
     super(pos, new Vector(0, 2));
   }
 }
+
 
 class FireRain extends Fireball {
   constructor(pos) {
@@ -282,6 +285,38 @@ class FireRain extends Fireball {
 
   handleObstacle() {
     this.pos = this.firstPos;
+  }
+}
+
+class Coin extends Actor {
+  constructor(pos = new Vector(0, 0)) {
+    super(pos, new Vector(0.6, 0.6));
+    this.pos = pos.plus(new Vector(0.2, 0.1));
+    this.firstPos = pos.plus(new Vector(0.2, 0.1));
+    this.springSpeed = 8;
+    this.springDist = 0.07;
+    this.spring = Math.floor(Math.random() * (2 * Math.PI + 1));
+  }
+
+  get type() {
+    return 'coin';
+  }
+
+  updateSpring(time = 1) {
+    this.spring = this.spring + this.springSpeed * time;
+  }
+
+  getSpringVector() {
+    return new Vector(0, Math.sin(this.spring) * this.springDist);
+  }
+
+  getNextPosition(time = 1) {
+    this.updateSpring(time);
+    return this.firstPos.plus(this.getSpringVector());
+  }
+
+  act(time) {
+    this.pos = this.getNextPosition(time);
   }
 }
 
