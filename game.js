@@ -146,6 +146,7 @@ class Level {
 
   removeActor(actor) {
     this.actors.splice(this.actors.indexOf(actor), 1);
+    // console.log(this.actors);
   }
 
   noMoreActors(type) {
@@ -154,11 +155,11 @@ class Level {
     }
     for(let actor of this.actors) {
       if(actor.type === type) {
+        console.log('все верно');
         return false;
-      } else {
-        return true;
       }
     }
+    return true;
   }
   // Один из ключевых методов, определяющий логику игры. Меняет состояние игрового поля при касании игроком каких-либо объектов или препятствий.
   playerTouched(type, actor) {
@@ -168,9 +169,9 @@ class Level {
 
     if(type === 'lava' || type === 'fireball') {
       this.status = 'lost';
-    } else if(type === 'coin') {
+    } else if(type === 'coin' && actor.type === 'coin') {
       this.removeActor(actor);
-      if(this.noMoreActors(type)) {
+      if(this.noMoreActors('coin')) {
         this.status = 'won';
       }
     }
@@ -332,39 +333,102 @@ class Player extends Actor {
 
 const schemas = [
   [
-    '                    ',
-    '                    ',
-    '                    ',
-    '                    ',
-    '            o       ',
-    '    =               ',
-    '       o            ',
-    '     !xxxxxxxx      ',
-    ' @                  ',
-    'xxx!             |o ',
-    '               !xxxx'
+    "     v                 ",
+    "                       ",
+    "                       ",
+    "                       ",
+    "                       ",
+    "  |xxx       w         ",
+    "  o                 o  ",
+    "  x               = x  ",
+    "  x          o o    x  ",
+    "  x  @    *  xxxxx  x  ",
+    "  xxxxx             x  ",
+    "      x!!!!!!!!!!!!!x  ",
+    "      xxxxxxxxxxxxxxx  ",
+    "                       "
   ],
   [
-    '      v             ',
-    '                    ',
-    '  v                 ',
-    '           o   o    ',
-    '        xxxxxxxxx   ',
-    '@   x               ',
-    'x                   ',
-    '                    '
+    "     v                 ",
+    "                       ",
+    "                       ",
+    "                       ",
+    "                       ",
+    "  |                    ",
+    "  o                 o  ",
+    "  x               = x  ",
+    "  x          o o    x  ",
+    "  x  @       xxxxx  x  ",
+    "  xxxxx             x  ",
+    "      x!!!!!!!!!!!!!x  ",
+    "      xxxxxxxxxxxxxxx  ",
+    "                       "
   ],
   [
-    '      v             ',
-    '             v      ',
-    '  v                 ',
-    '           o   o    ',
-    '        xxxxxxxxx   ',
-    '@   x               ',
-    'x                   ',
-    '                    '
+    "        |           |  ",
+    "                       ",
+    "                       ",
+    "                       ",
+    "                       ",
+    "                       ",
+    "                       ",
+    "                       ",
+    "                       ",
+    "     |                 ",
+    "                       ",
+    "         =      |      ",
+    " @ |  o            o   ",
+    "xxxxxxxxx!!!!!!!xxxxxxx",
+    "                       "
+  ],
+  [
+    "                       ",
+    "                       ",
+    "                       ",
+    "    o                  ",
+    "    x      | x!!x=     ",
+    "         x             ",
+    "                      x",
+    "                       ",
+    "                       ",
+    "                       ",
+    "               xxx     ",
+    "                       ",
+    "                       ",
+    "       xxx  |          ",
+    "                       ",
+    " @                     ",
+    "xxx                    ",
+    "                       "
+  ], [
+    "   v         v",
+    "              ",
+    "         !o!  ",
+    "              ",
+    "              ",
+    "              ",
+    "              ",
+    "         xxx  ",
+    "          o   ",
+    "        =     ",
+    "  @           ",
+    "  xxxx        ",
+    "  |           ",
+    "      xxx    x",
+    "              ",
+    "          !   ",
+    "              ",
+    "              ",
+    " o       x    ",
+    " x      x     ",
+    "       x      ",
+    "      x       ",
+    "   xx         ",
+    "              "
   ]
 ];
+
+
 const actorDict = {
   '@': Player,
   'v': FireRain,
