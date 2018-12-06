@@ -1,12 +1,12 @@
 'use strict';
 
-function isValidVector(vector, message) {
+function checkValidVector (vector, message) {
   if (!(vector instanceof Vector)) {
     throw new Error(message);
   }
 }
 
-function isValidActor(actor, message) {
+function checkValidActor(actor, message) {
   if (!(actor && actor instanceof Actor)) {
     throw new Error(message);
   }
@@ -20,7 +20,7 @@ class Vector {
   }
 
   plus(vector) {
-    isValidVector(vector, 'Можно прибавлять к вектору только вектор типа Vector');
+    checkValidVector (vector, 'Можно прибавлять к вектору только вектор типа Vector');
     const x = this.x + vector.x;
     const y = this.y + vector.y;
     return new Vector(x, y);
@@ -36,9 +36,9 @@ class Vector {
 class Actor {
   constructor(pos = new Vector(0, 0), size = new Vector(1, 1), speed = new Vector(0, 0)) {
     const message = 'Передавать в конструктор Actor можно только объект типа Vector';
-    isValidVector(pos, message);
-    isValidVector(size, message);
-    isValidVector(speed, message);
+    checkValidVector (pos, message);
+    checkValidVector (size, message);
+    checkValidVector (speed, message);
     this.pos = pos;
     this.size = size;
     this.speed = speed;
@@ -65,7 +65,7 @@ class Actor {
 
   // Метод проверяет, пересекается ли текущий объект с переданным объектом
   isIntersect(actor) {
-    isValidActor(actor, 'неверный тип или отсутвие объекта, объект должен типа Actor');
+    checkValidActor(actor, 'неверный тип или отсутвие объекта, объект должен типа Actor');
     if (actor === this) {
       return false;
     } else if (actor.top < this.bottom && actor.bottom > this.top && actor.left < this.right && actor.right > this.left) {
@@ -115,7 +115,7 @@ class Level {
 
   // Метод Определяет, расположен ли какой-то другой движущийся объект в переданной позиции, и если да, вернёт этот объект.
   actorAt(actor) {
-    isValidActor(actor, 'неверный тип или отсутвие объекта, объект должен типа Actor');
+    checkValidActor(actor, 'неверный тип или отсутвие объекта, объект должен типа Actor');
     for (let el of this.actors) {
       if(el instanceof Actor && el.isIntersect(actor)) {
         return el;
@@ -126,8 +126,8 @@ class Level {
   // Аналогично методу actorAt определяет, нет ли препятствия в указанном месте. Также этот метод контролирует выход объекта за границы игрового поля.
   obstacleAt(pos, size) {
     const message = 'Метод obstacleAt: неверный тип переданного объекта, объект должен типа Vector';
-    isValidVector(pos, message);
-    isValidVector(size, message);
+    checkValidVector (pos, message);
+    checkValidVector (size, message);
     let actor = new Actor(pos, size);
     if(actor.left < 0 || actor.top < 0 || actor.right > this.width) {
       return 'wall';
@@ -329,6 +329,8 @@ class Player extends Actor {
     return 'player';
   }
 }
+
+//const schemas = loadLevels(); // Так не работает
 
 
 const schemas = [
